@@ -27,6 +27,7 @@ import java.util.*;
 import java.lang.*;
 
 
+
 	class cInterage {
 		
 		String vFrase = "";
@@ -47,12 +48,17 @@ import java.lang.*;
 		
 		String mPausa() {
 			Console console = System.console();
-			String vInput = console.readLine("Digite qualquer tecla para continuar...");
+			String vInput = console.readLine("Tecle ENTER para continuar...");
 			return vInput;
 		}
 		
 		void mLimpa() {
 			for (int i = 0; i < 50; ++i) System.out.print("\n");
+			try { new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor(); } catch(InterruptedException|IOException e) {}
+		}
+		
+		void mLimpaWin() {
+			try { new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor(); } catch(InterruptedException|IOException e) {}
 		}
 		
 		void mWait() {
@@ -88,7 +94,7 @@ import java.lang.*;
 
 		public void mSalvar() {	
 			try {
-				File vArq = new File("dat/"+vNome+".gamesave");
+				File vArq = new File("orcdata/"+vNome+".gamesave");
 				vArq.createNewFile();
 				FileWriter vSalvar = new FileWriter(vArq);
 				vSalvar.write(vpch+";"+vpce+";"+vpcxp+";"+vpclvl+";"+vpcgold+";"+vpcpot+";"+vClasse);
@@ -99,13 +105,85 @@ import java.lang.*;
 				e.printStackTrace();
 			}
 		}
-
+		
+		
+		/*
+			Configura Level
+		*/
+		
+		public int mConfiguraLevel(Integer pXP) {	
+			if (pXP > 1 && pXP < 500) {
+				return 1;
+			} else if (pXP > 499 && pXP < 1000) {
+				return 2;
+			} else if (pXP > 999 && pXP < 20000) {
+				return 3;
+			} else if (pXP > 19999 && pXP < 50000) {
+				return 4;
+			} else if (pXP > 49999 && pXP < 80000) {
+				return 5;
+			} else if (pXP > 79999 && pXP < 100000) {
+				return 6;
+			} else if (pXP > 99999 && pXP < 150000) {
+				return 7;
+			} else if (pXP > 149999 && pXP < 200000) {
+				return 8;
+			} else if (pXP > 199999 && pXP < 250000) {
+				return 9;
+			} else if (pXP > 249999 && pXP < 350000) {
+				return 10;
+			}
+			return pXP;
+		}
+		
+				/*
+			Configura Level
+		*/
+		
+		public int mCalculaHabilidade(Integer pLvl) {	
+			if (pLvl == 1) {
+				return 12;
+			} else if (pLvl == 2) {
+				return 14;
+			} else if (pLvl == 3) {
+				return 16;
+			} else if (pLvl == 4) {
+				return 18;
+			} else if (pLvl == 5) {
+				return 20;
+			} else if (pLvl == 6) {
+				return 22;
+			} else if (pLvl == 7) {
+				return 24;
+			} else if (pLvl == 8) {
+				return 26;
+			} else if (pLvl == 9) {
+				return 28;
+			} else if (pLvl == 10) {
+				return 30;
+			}
+			return pLvl;
+		}
+		
+		public String mGeraNomeOrc(Integer pId) {	
+			Integer vCont=0;
+			String vOrc="";
+			String vStr="Gludbog;Ulgha;Kubguk;Duugh;Tobdakh;Zugrak;Drutrug;Thokgor;Zikgor;Bugrog;Brughnab;Mashnakh;Sugugh;Bludmuk;Sagdakh;Skagblug;Thughnab;Odbog;Ruglut;Garzug";
+			while (vCont < pId)
+			{
+				List<String> ListaNome = Arrays.asList(vStr.split(";"));
+				vOrc = ListaNome.get(vCont);
+				vCont++;
+			}
+			return vOrc;
+		}
+		
 		public void mInicializaBau(String pNome) {	
 			vNome=pNome;
 			String vItem1="1;Arma;1;1;100;1;Faca Pequena Atk 1 Dano 1 $100\n";
 			String vItem2="2;Set;0;0;50;1;Roupas Simples Def 0 Absorve 0 $50\n";
 			try {
-				File vArq = new File("dat/"+vNome+".items");
+				File vArq = new File("orcdata/"+vNome+".items");
 				vArq.createNewFile();
 				FileWriter vSalvar = new FileWriter(vArq);
 				vSalvar.write("1;Arma;1;1;100;1;Faca Pequena Atk 1 Dano 1 $100\n");
@@ -125,7 +203,7 @@ import java.lang.*;
 			vNome=pNome;
 			vItem=pItem;
 			try {
-				File vArq = new File("dat/"+vNome+".items");
+				File vArq = new File("orcdata/"+vNome+".items");
 				FileWriter vSalvar = new FileWriter(vArq, true);
 				vSalvar.write(vItem);
 				vSalvar.flush();
@@ -145,7 +223,7 @@ import java.lang.*;
 			cInterage oDiz = new cInterage();
 			
 			try {
-				Scanner vRegistro = new Scanner(new FileReader("dat/"+vNome+".gamesave"));
+				Scanner vRegistro = new Scanner(new FileReader("orcdata/"+vNome+".gamesave"));
 				vRegistro.useDelimiter(";");
 				/*
 					Processa Lista para Obter Valor 
@@ -185,7 +263,7 @@ import java.lang.*;
 			cInterage oDiz = new cInterage();
 						
 			try {
-				Scanner vRegistro = new Scanner(new FileReader("dat/"+vNome+".items"));
+				Scanner vRegistro = new Scanner(new FileReader("orcdata/"+vNome+".items"));
 				vRegistro.useDelimiter("\\n");
 				/*
 					Processa Registros
@@ -240,7 +318,7 @@ import java.lang.*;
 			cInterage oDiz = new cInterage();
 						
 			try {
-				Scanner vRegistro = new Scanner(new FileReader("dat/"+vNome+".items"));
+				Scanner vRegistro = new Scanner(new FileReader("orcdata/"+vNome+".items"));
 				vRegistro.useDelimiter("\\n");
 				/*
 					Processa Registros
@@ -328,12 +406,12 @@ import java.lang.*;
 			try {
 				
 				// Abre Arquivo Temporário
-				File vArq = new File("dat/"+vNome+".items.temp");
-				File vArq2 = new File("dat/"+vNome+".items");
+				File vArq = new File("orcdata/"+vNome+".items.temp");
+				File vArq2 = new File("orcdata/"+vNome+".items");
 				vArq.createNewFile();
 				FileWriter vSalvar = new FileWriter(vArq);
 		
-				Scanner vRegistro = new Scanner(new FileReader("dat/"+vNome+".items"));
+				Scanner vRegistro = new Scanner(new FileReader("orcdata/"+vNome+".items"));
 				vRegistro.useDelimiter("\\n");
 				/*
 					Processa Registros
@@ -397,13 +475,13 @@ import java.lang.*;
 
 			try {
 				// Abre Arquivo Temporário
-				File vArq = new File("dat/"+vNome+".items.temp");
-				File vArq2 = new File("dat/"+vNome+".items");
+				File vArq = new File("orcdata/"+vNome+".items.temp");
+				File vArq2 = new File("orcdata/"+vNome+".items");
 				vArq.createNewFile();
 				FileWriter vSalvar = new FileWriter(vArq);
 				
 				// Verifica o Tipo e a Classe do Item
-				Scanner vRegistro = new Scanner(new FileReader("dat/"+vNome+".items"));
+				Scanner vRegistro = new Scanner(new FileReader("orcdata/"+vNome+".items"));
 				vRegistro.useDelimiter("\\n");
 				while (vRegistro.hasNext()) 
 				{
@@ -426,7 +504,7 @@ import java.lang.*;
 				
 				
 				// Atualiza Flag para Zero para todos os Itens do Tipo Selecionado
-				Scanner vRegistro2 = new Scanner(new FileReader("dat/"+vNome+".items"));
+				Scanner vRegistro2 = new Scanner(new FileReader("orcdata/"+vNome+".items"));
 				vRegistro2.useDelimiter("\\n");
 				vIDRegistro=1;
 				while (vRegistro2.hasNext()) 
@@ -476,11 +554,11 @@ import java.lang.*;
 				
 				// Atualiza Item para Flag 1
 				vIDRegistro=1;
-				File vArq3 = new File("dat/"+vNome+".items.temp");
-				File vArq4 = new File("dat/"+vNome+".items");
+				File vArq3 = new File("orcdata/"+vNome+".items.temp");
+				File vArq4 = new File("orcdata/"+vNome+".items");
 				vArq3.createNewFile();
 				FileWriter vSalvar2 = new FileWriter(vArq3);
-				Scanner vRegistro3 = new Scanner(new FileReader("dat/"+vNome+".items"));
+				Scanner vRegistro3 = new Scanner(new FileReader("orcdata/"+vNome+".items"));
 				vRegistro3.useDelimiter("\\n");
 				while (vRegistro3.hasNext()) 
 				{
@@ -565,6 +643,7 @@ import java.lang.*;
 			*/
 			String vOpt, vOptMenu, vOptLojaItens, vOptLojaArmas, vOptLojaMagia, vOptArena, vOptMissoes;
 			String vNome = "";
+			String vNomeNPC = "Drugul";
 			String vClasse ="";
 			Integer vpch=0;
 			Integer vpce=0;
@@ -608,6 +687,32 @@ import java.lang.*;
 				Limpando a Tela
 			*/
 			oDiz.mLimpa();
+			oDiz.mLimpaWin();
+			
+			
+			/*
+				Caso não exista cria o diretorio orcdata
+			*/
+			File theDir = new File("orcdata");
+
+			if (!theDir.exists()) {
+				//oDiz.mNovaFrase("# Diretório orcdata não encontrado. Criando.");
+				//oDiz.mFala();
+				boolean result = false;
+
+				try{
+					theDir.mkdir();
+					result = true;
+				} 
+				catch(SecurityException se){
+					oDiz.mNovaFrase("# Erro! Não foi possível criar diretório orcdata. Crie o diretório manualmente ou execute em um diretório com permissões de escrita.");
+					oDiz.mFala();
+				}        
+				if(result) {    
+
+				}
+			}
+			
 			
 			/*
 				Tela Inicial
@@ -792,8 +897,8 @@ import java.lang.*;
 				oDiz.mFala();
 				oDiz.mNovaFrase("# [7] Arena");
 				oDiz.mFala();
-				oDiz.mNovaFrase("# [8] Missões");
-				oDiz.mFala();
+				//oDiz.mNovaFrase("# [8] Missões");
+				//oDiz.mFala();
 				oDiz.mNovaFrase("# [X] Sair");
 				oDiz.mFala();
 				
@@ -1355,10 +1460,15 @@ import java.lang.*;
 					Integer vNPCDano= 0;
 					Object Arena = new Object();
 					
+					// Verifica Level PC
+					vpclvl=Integer.parseInt(oGrava.mCarregar(vNome,4));
+										
 					// Gera Valores NPC
-					vnpch = oArena.mDados(6,10);
-					vnpce = oArena.mDados(6,14);
-					vnpcgold = oArena.mDados(500,999);
+					vNomeNPC=oGrava.mGeraNomeOrc(oArena.mDados(1,20));
+					vnpch = oArena.mDados(6,10) + vpclvl;
+					vnpce = oArena.mDados(6,14) + vpclvl;
+					vnpcgold = oArena.mDados(500,999) * vpclvl;
+					vnpcxp = oArena.mDados(100,500) * vpclvl;
 				
 					synchronized(Arena) {
 						while (vExitArena==0) 
@@ -1378,11 +1488,11 @@ import java.lang.*;
 							oDiz.mFala();
 							oDiz.mNovaFrase("# ARENA");
 							oDiz.mFala();
-							oDiz.mNovaFrase("# PC - H: " + vpch + " E: " + vpce + "Gold: " + vpcgold);
+							oDiz.mNovaFrase("# "+ vNome +" - H: " + vpch + " E: " + vpce + " Gold: " + vpcgold + " LVL/XP " + vpclvl + "/" + vpcxp);
 							oDiz.mFala();
 							oDiz.mNovaFrase("#");
 							oDiz.mFala();
-							oDiz.mNovaFrase("# NPC - H: " + vnpch + " E: " + vnpce + " Gold: " + vnpcgold);
+							oDiz.mNovaFrase("# "+ vNomeNPC +" - H: " + vnpch + " E: " + vnpce + " Gold: " + vnpcgold);
 							oDiz.mFala();
 							oDiz.mNovaFrase("#");
 							oDiz.mFala();						
@@ -1392,8 +1502,6 @@ import java.lang.*;
 							oDiz.mFala();
 							oDiz.mNovaFrase("# [2] Rampage");
 							oDiz.mFala();
-							oDiz.mNovaFrase("# [3] Poções");
-							oDiz.mFala();														
 							oDiz.mNovaFrase("#");
 							oDiz.mFala();						
 							oDiz.mNovaFrase("# [X] Sair");
@@ -1404,8 +1512,29 @@ import java.lang.*;
 								Processa Opções da Arena
 							*/
 							if (vOptArena.equals("1")) {
-								
-									oDiz.mNovaFrase("# Processa Ataque");
+							
+							if (vnpce < 1 || vpce < 1)
+							{
+							
+								if (vnpce < 1) {
+									oDiz.mNovaFrase("# Gerando Novo NPC");
+									oDiz.mFala();
+									oDiz.mWait();
+									vNomeNPC=oGrava.mGeraNomeOrc(oArena.mDados(1,20));
+									vnpch = oArena.mDados(6,10) + vpclvl;
+									vnpce = oArena.mDados(6,14) + vpclvl;
+									vnpcgold = oArena.mDados(500,999) * vpclvl;
+									vnpcxp = oArena.mDados(100,500) * vpclvl;
+									}
+									
+								if (vpce < 1) {
+									oDiz.mNovaFrase("# Sem pontos de Vida, Vá beber!");
+									oDiz.mFala();
+									}
+									
+							} else {
+							
+									oDiz.mNovaFrase("# Processa Ataque de " + vNome);
 									oDiz.mFala();
 									oDiz.mWait();
 									
@@ -1427,19 +1556,251 @@ import java.lang.*;
 										
 										// Calcula Dano
 										vPCDano = oArena.mDados(1,6);
-										oDiz.mNovaFrase("# ORC sofre " + vPCDano + " pontos de dano.");
+										oDiz.mNovaFrase("# " + vNomeNPC + " sofre " + vPCDano + " pontos de dano.");
 										oDiz.mFala();
 										oDiz.mWait();
 										
 										vnpce = vnpce - vPCDano;
 										
 										if (vnpce < 1) {
-											oDiz.mNovaFrase("# ORC foi destruído");
+											oDiz.mNovaFrase("# " + vNomeNPC + " foi destruído");
 											oDiz.mFala();
+											// Configura Gold e XP
+											vpcgold = vpcgold + vnpcgold;
+											vpcxp = vpcxp + vnpcxp;
+											// Calcula Level
+											vpclvl=oGrava.mConfiguraLevel(vpcxp);
+											vpch=oGrava.mCalculaHabilidade(vpclvl);
+											oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse);
+											oGrava.mSalvar();	
 											oDiz.mPausa();
+										} 
+										
+									} else {
+										oDiz.mNovaFrase("# " + vNomeNPC + " Defendeu!");
+										oDiz.mFala();
+										oDiz.mWait();
+									}
+									
+									if (vnpce > 0) {
+										// Round NPC
+										oDiz.mNovaFrase("# Ataque de " + vNomeNPC + "!");
+										oDiz.mFala();
+										oDiz.mWait();
+										vNPCAtk = vnpch + oArena.mDados(2,12);
+										vPCDef = vpch + oArena.mDados(2,12);
+										oDiz.mNovaFrase("# Força de Ataque: " + vNPCAtk);
+										oDiz.mFala();
+										oDiz.mWait();
+										
+										oDiz.mNovaFrase("# Força de Defesa: " + vPCDef);
+										oDiz.mFala();
+										oDiz.mWait();
+										
+										if (vNPCAtk > vPCDef) {
+											oDiz.mNovaFrase("# Ataque bem sucedido!");
+											oDiz.mFala();
+											oDiz.mWait();
+											
+											// Calcula Dano
+											vNPCDano = oArena.mDados(1,6);
+											oDiz.mNovaFrase("# " + vNome + " sofre " + vNPCDano + " pontos de dano.");
+											oDiz.mFala();
+											oDiz.mWait();
+											
+											vpce = vpce - vNPCDano;
+											
+											// Processa Poções
+											while (vpce < 1 && vpcpot > 0)
+											{
+												
+												vpce = vpce + oArena.mDados(2,12);
+												vpcpot = vpcpot - 1;
+												oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse);
+												oGrava.mSalvar();	
+												oDiz.mNovaFrase("# Recuperando Energia");
+												oDiz.mFala();
+												oDiz.mWait();
+											}
+											
+											if (vpce < 1) {
+												oDiz.mNovaFrase("# " + vNome + "foi humilhado.");
+												oDiz.mFala();
+												oDiz.mPausa();
+											}
+											
+										} else {
+											oDiz.mNovaFrase("# " + vNome + " Defendeu!");
+											oDiz.mFala();
+											oDiz.mWait();
+										}
+									}
+									
+									
+								}
+									
+								
+							}
+							
+							
+							// Verifica Opção Rampage
+							if (vOptArena.equals("2")) {
+							
+							if (vnpce < 1 || vpce < 1)
+							{
+							
+								if (vnpce < 1) {
+									oDiz.mNovaFrase("# Gerando Novo NPC");
+									oDiz.mFala();
+									oDiz.mWait();
+									vNomeNPC=oGrava.mGeraNomeOrc(oArena.mDados(1,20));
+									vnpch = oArena.mDados(10,18) + vpclvl;
+									vnpce = oArena.mDados(12,18) + vpclvl;
+									vnpcgold = oArena.mDados(500,999) * vpclvl;
+									vnpcxp = oArena.mDados(100,500) * vpclvl;
+									}
+									
+								if (vpce < 1) {
+									oDiz.mNovaFrase("# Sem pontos de Vida, Vá beber!");
+									oDiz.mFala();
+									}
+									
+							} else {
+							
+							
+								oDiz.mNovaFrase("# RAAAMPAGEEE!");
+								oDiz.mFala();
+								oDiz.mWait();
+							
+								while (vnpce > 0 && vpce > 0)
+								{
+								if (vnpce < 1 || vpce < 1)
+								{
+								
+									if (vnpce < 1) {
+										oDiz.mNovaFrase("# Gerando Novo NPC");
+										oDiz.mFala();
+										oDiz.mWait();
+										vNomeNPC=oGrava.mGeraNomeOrc(oArena.mDados(1,20));
+										vnpch = oArena.mDados(6,10);
+										vnpce = oArena.mDados(6,14);
+										vnpcgold = oArena.mDados(500,999);
 										}
 										
+									if (vpce < 1) {
+										oDiz.mNovaFrase("# Sem pontos de Vida, Vá beber!");
+										oDiz.mFala();
+										}
+										
+								} else {
+								
+										//oDiz.mNovaFrase("# Processa Ataque de " + vNome);
+										//oDiz.mFala();
+										//oDiz.mWait();
+										
+										// Round PC
+										vPCAtk = vpch + oArena.mDados(2,12);
+										vNPCDef = vnpch + oArena.mDados(2,12);
+										//oDiz.mNovaFrase("# Força de Ataque: " + vPCAtk);
+										//oDiz.mFala();
+										//oDiz.mWait();
+										
+										//oDiz.mNovaFrase("# Força de Defesa: " + vNPCDef);
+										//oDiz.mFala();
+										//oDiz.mWait();
+										
+										if (vPCAtk > vNPCDef) {
+											//oDiz.mNovaFrase("# Ataque bem sucedido!");
+											//oDiz.mFala();
+											//oDiz.mWait();
+											
+											// Calcula Dano
+											vPCDano = oArena.mDados(1,6);
+											oDiz.mNovaFrase("# " + vNomeNPC + " sofre " + vPCDano + " pontos de dano.");
+											oDiz.mFala();
+											oDiz.mWait();
+											
+											vnpce = vnpce - vPCDano;
+											
+											if (vnpce < 1) {
+												oDiz.mNovaFrase("# " + vNomeNPC + " foi destruído");
+												// Configura Gold e XP
+												vpcgold = vpcgold + vnpcgold;
+												vpcxp = vpcxp + vnpcxp;
+												// Calcula Level e Reprocessa Atributos
+												vpclvl=oGrava.mConfiguraLevel(vpcxp);
+												vpch=oGrava.mCalculaHabilidade(vpclvl);
+												oDiz.mFala();
+												oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse);
+												oGrava.mSalvar();	
+												oDiz.mPausa();
+											} 
+											
+										} else {
+											//oDiz.mNovaFrase("# " + vNomeNPC + " Defendeu!");
+											//oDiz.mFala();
+											//oDiz.mWait();
+										}
+										
+										if (vnpce > 0) {
+											// Round NPC
+											//oDiz.mNovaFrase("# Ataque de " + vNomeNPC + "!");
+											//oDiz.mFala();
+											//oDiz.mWait();
+											vNPCAtk = vnpch + oArena.mDados(2,12);
+											vPCDef = vpch + oArena.mDados(2,12);
+											//oDiz.mNovaFrase("# Força de Ataque: " + vNPCAtk);
+											//oDiz.mFala();
+											//oDiz.mWait();
+											
+											//oDiz.mNovaFrase("# Força de Defesa: " + vPCDef);
+											//oDiz.mFala();
+											//oDiz.mWait();
+											
+											if (vNPCAtk > vPCDef) {
+												
+												//oDiz.mNovaFrase("# Ataque bem sucedido!");
+												//oDiz.mFala();
+												//oDiz.mWait();
+												
+												// Calcula Dano
+												vNPCDano = oArena.mDados(1,6);
+												oDiz.mNovaFrase("# " + vNome + " sofre " + vNPCDano + " pontos de dano.");
+												oDiz.mFala();
+												oDiz.mWait();
+												
+												vpce = vpce - vNPCDano;
+												
+												// Processa Poções
+												while (vpce < 1 && vpcpot > 0)
+												{
+													
+													vpce = vpce + oArena.mDados(2,12);
+													vpcpot = vpcpot - 1;
+													oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse);
+													oGrava.mSalvar();	
+													//oDiz.mNovaFrase("# Recuperando Energia");
+													//oDiz.mFala();
+													//oDiz.mWait();
+												}
+												
+												if (vpce < 1) {
+													oDiz.mNovaFrase("# " + vNome + "foi humilhado. tsc tsc ¬¬");
+													oDiz.mFala();
+													oDiz.mPausa();
+												}
+												
+											} else {
+												//oDiz.mNovaFrase("# " + vNome + " Defendeu!");
+												//oDiz.mFala();
+												//oDiz.mWait();
+										}
+										}
+										
+										
 									}
+									}
+								}
 									
 								
 							}
