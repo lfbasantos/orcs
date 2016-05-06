@@ -1,30 +1,18 @@
 /*
 
- Orcs - Alpha v.1.4
+ Orcs - Alpha v.0.1.6
  Luiz Filipe - lfbasantos@gmail.com
+
+ 02/05/2016 - Implementação do Limite de HP por Level
+ 06/05/2016 - Modificações na Arena para processar Ataque Mágico
  
 */
 
-
-/*
- Documentação
- 
- Localização dos Atributos
- Habilidade => vpch => 1
- Energia => vpce => 2
- XP => vpcxp => 3
- Level => vpclvl => 4
- Gold => vpcgold => 5
- Poções => vpcpot => 6
- 
-*/
 
 
 import java.io.*;
-import java.math.*;
-import java.math.BigInteger;
 import java.util.*;
-import java.lang.*;
+
 
 
 
@@ -73,6 +61,7 @@ import java.lang.*;
 		String vNome = "";
 		String vItem = "";
 		String vClasse = "";
+		Integer vMana;
 		Integer vpch;
 		Integer vpce;
 		Integer	vpcxp; 
@@ -81,7 +70,7 @@ import java.lang.*;
 		Integer vpcpot;
 		int vPos;
 		
-		void mConfiguraAtributos(String pNome, Integer ppch, Integer ppce, Integer ppcxp, Integer ppclvl, Integer ppcgold, Integer ppcpot, String pClasse) {
+		void mConfiguraAtributos(String pNome, Integer ppch, Integer ppce, Integer ppcxp, Integer ppclvl, Integer ppcgold, Integer ppcpot, String pClasse, Integer pMana) {
 			vNome=pNome;
 			vClasse=pClasse;
 			vpch=ppch;
@@ -90,6 +79,7 @@ import java.lang.*;
 			vpclvl=ppclvl;
 			vpcgold=ppcgold;
 			vpcpot=ppcpot;
+			vMana=pMana;
 		}
 
 		public void mSalvar() {	
@@ -97,7 +87,7 @@ import java.lang.*;
 				File vArq = new File("orcdata/"+vNome+".gamesave");
 				vArq.createNewFile();
 				FileWriter vSalvar = new FileWriter(vArq);
-				vSalvar.write(vpch+";"+vpce+";"+vpcxp+";"+vpclvl+";"+vpcgold+";"+vpcpot+";"+vClasse);
+				vSalvar.write(vpch+";"+vpce+";"+vpcxp+";"+vpclvl+";"+vpcgold+";"+vpcpot+";"+vClasse+";"+vMana);
 				vSalvar.flush();
 				vSalvar.close();
 			} catch(IOException e)
@@ -110,60 +100,104 @@ import java.lang.*;
 		/*
 			Configura Level
 		*/
-		
 		public int mConfiguraLevel(Integer pXP) {	
-			if (pXP > 1 && pXP < 500) {
-				return 1;
-			} else if (pXP > 499 && pXP < 1000) {
-				return 2;
-			} else if (pXP > 999 && pXP < 20000) {
-				return 3;
-			} else if (pXP > 19999 && pXP < 50000) {
-				return 4;
-			} else if (pXP > 49999 && pXP < 80000) {
-				return 5;
-			} else if (pXP > 79999 && pXP < 100000) {
-				return 6;
-			} else if (pXP > 99999 && pXP < 150000) {
-				return 7;
-			} else if (pXP > 149999 && pXP < 200000) {
-				return 8;
-			} else if (pXP > 199999 && pXP < 250000) {
-				return 9;
-			} else if (pXP > 249999 && pXP < 350000) {
-				return 10;
+		
+			int[] vIni = new int[10000];
+			int[] vFim = new int[10000];
+			int[] vFator = new int[10000];
+			int vCont=2;
+			vFator[1]=500;
+			vIni[1]=1;
+			vFim[1]=1;
+			
+			// Calcula Fatores;
+			while (vCont < 10001)
+			{	
+				vFator[vCont] = vFator[vCont-1]+500;
+				vIni[vCont]=(vFator[vCont] * ((vCont-1)*(vCont-1)));
+				vFim[vCont]=(vFator[vCont] * ((vCont-1)*(vCont-1)));
+				
+				// Verifica Level
+				if (pXP >= vIni[vCont-1] && pXP <= vFim[vCont])
+				{
+					return vCont;
+				}
+				vCont++;
 			}
+			
 			return pXP;
 		}
 		
-				/*
-			Configura Level
+		/*
+			Configura Habilidade
 		*/
-		
 		public int mCalculaHabilidade(Integer pLvl) {	
-			if (pLvl == 1) {
-				return 12;
-			} else if (pLvl == 2) {
-				return 14;
-			} else if (pLvl == 3) {
-				return 16;
-			} else if (pLvl == 4) {
-				return 18;
-			} else if (pLvl == 5) {
-				return 20;
-			} else if (pLvl == 6) {
-				return 22;
-			} else if (pLvl == 7) {
-				return 24;
-			} else if (pLvl == 8) {
-				return 26;
-			} else if (pLvl == 9) {
-				return 28;
-			} else if (pLvl == 10) {
-				return 30;
+		
+			int vFator = 0;
+			int vCont=0;
+			int vPCH=1;
+			
+			// Calcula Fatores;
+			while (vCont < 10001)
+			{	
+				vFator = vCont + 12;
+				
+				// Verifica Level
+				if (vPCH == pLvl)
+				{
+					return vFator;
+				}
+				vCont+=2;
+				vPCH++;
 			}
+			
 			return pLvl;
 		}
+
+		/*
+			Calcula Limite HP
+		*/
+		public int mCalculaLimiteHP(Integer pLvl, Integer pPCE) {	
+		
+			int vPCE=1;
+			
+			// Calcula Limite HP do Level
+			vPCE = pLvl*10 + (pLvl*10);
+			
+			// Verifica se Atingiu Limite e mantém Limite do HP
+			if (pPCE >= vPCE)
+			{
+				return vPCE;
+			} else
+			{
+				return pPCE;
+			}
+			
+		}
+
+
+		/*
+			Calcula Limite MP
+		*/
+		public int mCalculaLimiteMP(Integer pLvl, Integer pMana) {	
+		
+			int vMana=1;
+			
+			// Calcula Limite MP do Level
+			vMana = pLvl*10 + (pLvl*20);
+			
+			// Verifica se Atingiu Limite e mantém Limite do MP
+			if (pMana >= vMana)
+			{
+				return vMana;
+			} else
+			{
+				return pMana;
+			}
+			
+		}
+		
+		
 		
 		public String mGeraNomeOrc(Integer pId) {	
 			Integer vCont=0;
@@ -178,6 +212,9 @@ import java.lang.*;
 			return vOrc;
 		}
 		
+		
+		
+		
 		public void mInicializaBau(String pNome) {	
 			vNome=pNome;
 			String vItem1="1;Arma;1;1;100;1;Faca Pequena Atk 1 Dano 1 $100\n";
@@ -186,8 +223,8 @@ import java.lang.*;
 				File vArq = new File("orcdata/"+vNome+".items");
 				vArq.createNewFile();
 				FileWriter vSalvar = new FileWriter(vArq);
-				vSalvar.write("1;Arma;1;1;100;1;Faca Pequena Atk 1 Dano 1 $100\n");
-				vSalvar.write("2;Set;0;0;50;1;Roupas Simples Def 0 Absorve 0 $50\n");
+				vSalvar.write(vItem1);
+				vSalvar.write(vItem2);
 				vSalvar.flush();
 				vSalvar.close();
 			} catch(IOException e)
@@ -233,9 +270,11 @@ import java.lang.*;
 					String vStr = vRegistro.next();
 						if ("DONE".equals(vStr)) 
 						{
+							vRegistro.close();
 							break;
 						}
 					if ( vCont == vPos ){
+						vRegistro.close();
 						return vStr;
 					}
 					vCont++;
@@ -273,6 +312,7 @@ import java.lang.*;
 					String vStr = vRegistro.next();
 						if ("DONE".equals(vStr)) 
 						{
+							vRegistro.close();
 							return vExit;
 						} 
 					/*
@@ -285,6 +325,7 @@ import java.lang.*;
 					vID++;
 							
 				}
+				vRegistro.close();
 			} catch(IOException e)
 			{
 				oDiz.mNovaFrase("Baú Não Encontrado.");
@@ -328,7 +369,13 @@ import java.lang.*;
 					String vStr = vRegistro.next();
 						if ("DONE".equals(vStr)) 
 						{
-							return vExit;
+							if (vTipoItem.equals("2") || vTipoItem.equals("2")){
+								vRegistro.close();
+								return "0";
+								} else if (vTipoItem.equals("1")) {
+									vRegistro.close();
+									return vExit;
+								}
 						} 
 					
 					// Verifica se o Item está Equipado
@@ -357,18 +404,21 @@ import java.lang.*;
 						if (vParam.equals("1")){
 							oDiz.mNovaFrase("# " + vNomeItem);
 							oDiz.mFala();
+							vRegistro.close();
 							return vNomeItem;
 						}
 						
 						if (vParam.equals("2")){
 							oDiz.mNovaFrase("# Bônus 1: " + vBonus1);
 							oDiz.mFala();
+							vRegistro.close();
 							return vBonus1;
 						}
 						
 						if (vParam.equals("3")){
 							oDiz.mNovaFrase("# Bônus 2: " + vBonus2);
 							oDiz.mFala();
+							vRegistro.close();
 							return vBonus2;
 						}
 						
@@ -379,6 +429,7 @@ import java.lang.*;
 					vID++;
 							
 				}
+				vRegistro.close();
 			} catch(IOException e)
 			{
 				oDiz.mNovaFrase("Baú Não Encontrado.");
@@ -387,6 +438,11 @@ import java.lang.*;
 				return vErro;
 			} 
 			
+			if (vTipoItem.equals("2") || vTipoItem.equals("2")){
+								return "0";
+								} else if (vTipoItem.equals("1")) {
+									return vExit;
+								}
 			return vExit;
 		}
 		
@@ -399,8 +455,6 @@ import java.lang.*;
 			String vID=pItem;
 			Integer vIDRegistro = 1;
 			Integer vExitErro=9;
-			Integer vExitOK=0;
-			Integer vExit=0;
 			cInterage oDiz = new cInterage();
 
 			try {
@@ -410,7 +464,6 @@ import java.lang.*;
 				File vArq2 = new File("orcdata/"+vNome+".items");
 				vArq.createNewFile();
 				FileWriter vSalvar = new FileWriter(vArq);
-		
 				Scanner vRegistro = new Scanner(new FileReader("orcdata/"+vNome+".items"));
 				vRegistro.useDelimiter("\\n");
 				/*
@@ -421,6 +474,8 @@ import java.lang.*;
 					String vStr = vRegistro.next();
 						if ("DONE".equals(vStr)) 
 						{
+							vRegistro.close();
+							vSalvar.close();
 							return vGold;
 						} 
 					/*
@@ -436,10 +491,16 @@ import java.lang.*;
 					vIDRegistro++;
 							
 				}
+				vRegistro.close();
 				vSalvar.flush();
 				vSalvar.close();
 				//Rename do arquivo temporário para o novo arquivo.
 				boolean vSucesso = vArq.renameTo(vArq2);
+				if (vSucesso){
+					oDiz.mNovaFrase("#");
+					oDiz.mFala();	
+				}
+				
 				
 			} catch(IOException e)
 			{
@@ -448,6 +509,7 @@ import java.lang.*;
 				oDiz.mPausa();
 				return vExitErro;
 			}
+
 			return vGold;
 		}
 		
@@ -462,7 +524,6 @@ import java.lang.*;
 			String vReg;
 			Integer vIDRegistro = 1;
 			Integer vExitErro=9;
-			Integer vExitOK=0;
 			Integer vExit=0;
 			Integer vDebug=0;
 			cInterage oDiz = new cInterage();
@@ -488,6 +549,8 @@ import java.lang.*;
 					String vStr = vRegistro.next();
 						if ("DONE".equals(vStr)) 
 						{
+							vSalvar.close();
+							vRegistro.close();
 							return vExit;
 						}
 					if ( vID == vIDRegistro ) {
@@ -501,7 +564,7 @@ import java.lang.*;
 					}
 					vIDRegistro++;
 				}
-				
+				vRegistro.close();
 				
 				// Atualiza Flag para Zero para todos os Itens do Tipo Selecionado
 				Scanner vRegistro2 = new Scanner(new FileReader("orcdata/"+vNome+".items"));
@@ -512,6 +575,9 @@ import java.lang.*;
 					String vStr2 = vRegistro2.next();
 						if ("DONE".equals(vStr2)) 
 						{
+							vSalvar.close();
+							vRegistro.close();
+							vRegistro2.close();
 							return vExit;
 						}
 					List<String> ListaBau = Arrays.asList(vStr2.split(";"));
@@ -542,9 +608,13 @@ import java.lang.*;
 					}
 					vIDRegistro++;
 				}
-				
+				vRegistro2.close();
 				vSalvar.close();
 				boolean vSucesso = vArq.renameTo(vArq2);
+				if (vSucesso){
+					oDiz.mNovaFrase("# ");
+					oDiz.mFala();
+				}
 				
 						if (vDebug==1) {
 								oDiz.mNovaFrase("FLAGS ATUALIZADOS PRA ZERO");
@@ -565,6 +635,10 @@ import java.lang.*;
 					String vStr3 = vRegistro3.next();
 						if ("DONE".equals(vStr3)) 
 						{
+							vSalvar2.close();
+							vRegistro.close();
+							vRegistro2.close();
+							vRegistro3.close();
 							return vExit;
 						}
 					
@@ -611,7 +685,12 @@ import java.lang.*;
 					vIDRegistro++;
 				}
 				vSalvar2.close();
+				vRegistro3.close();
 				boolean vSucesso2 = vArq3.renameTo(vArq4);
+				if (vSucesso2){
+					oDiz.mNovaFrase("#");
+					oDiz.mFala();
+				}
 				
 			} catch(IOException e)
 			{
@@ -632,6 +711,43 @@ import java.lang.*;
 			int randomNum = rand.nextInt((vMax - vMin) + 1) + vMin;
 			return randomNum;
 		}
+		
+		public static int mNpcH(int pLvl) {
+			int vMin=6;
+			int vMax=18;
+			Random rand = new Random();
+			int randomNum = rand.nextInt((vMax - vMin) + 1) + vMin;
+			randomNum=randomNum + pLvl;
+			return randomNum;
+		}
+		
+		public static int mNpcE(int pLvl) {
+			int vMin=6;
+			int vMax=18;
+			Random rand = new Random();
+			int randomNum = rand.nextInt((vMax - vMin) + 1) + vMin;
+			randomNum=randomNum + pLvl;
+			return randomNum;
+		}		
+		
+		public static int mNpcXP(int pLvl) {
+			int vMin=100;
+			int vMax=500;
+			Random rand = new Random();
+			int randomNum = rand.nextInt((vMax - vMin) + 1) + vMin;
+			randomNum=randomNum * pLvl;
+			return randomNum;
+		}
+		
+		public static int mNpcGold(int pLvl) {
+			int vMin=500;
+			int vMax=1000;
+			Random rand = new Random();
+			int randomNum = rand.nextInt((vMax - vMin) + 1) + vMin;
+			randomNum=randomNum * pLvl;
+			return randomNum;
+		}
+		
 	}
 
 
@@ -641,12 +757,13 @@ import java.lang.*;
 			/*
 				Variáveis de PC e NPC
 			*/
-			String vOpt, vOptMenu, vOptLojaItens, vOptLojaArmas, vOptLojaMagia, vOptArena, vOptMissoes;
+			String vOpt, vOptMenu, vOptLojaItens, vOptArena;
 			String vNome = "";
 			String vNomeNPC = "Drugul";
 			String vClasse ="";
 			Integer vpch=0;
 			Integer vpce=0;
+			Integer vMana=0;
 			Integer vpcxp=0;
 			Integer vpclvl=0;
 			Integer vpcgold=0;
@@ -654,17 +771,13 @@ import java.lang.*;
 			Integer vnpch=0;
 			Integer vnpce=0;
 			Integer vnpcxp=0;
-			Integer vnpclvl=0;
 			Integer vnpcgold=0;
-			Integer vnpcpot=0;
 			String vVerificaLoad="0";
 			int vInicioOk=1;
-			int vMenuOk=1;
 			int vExit=0;
 			int vExitMenu=0;
 			int vExitLojaItens=0;
 			int vExitArena=0;
-			String[] vItems = new String[1000];
 			
 			do {
 			
@@ -719,7 +832,7 @@ import java.lang.*;
 			*/
 			oDiz.mNovaFrase("#");
 			oDiz.mFala();
-			oDiz.mNovaFrase("# ORCS 1.4");
+			oDiz.mNovaFrase("# ORCS v.0.1.6");
 			oDiz.mFala();
 			oDiz.mNovaFrase("#");
 			oDiz.mFala();
@@ -769,21 +882,15 @@ import java.lang.*;
 				oDiz.mFala();
 				oDiz.mNovaFrase("#");
 				oDiz.mFala();
-				oDiz.mNovaFrase("# [1] Guerreiro");
+				oDiz.mNovaFrase("# [1] Escola de Armas");
 				oDiz.mFala();
-				oDiz.mNovaFrase("# Habilidade 12");
-				oDiz.mFala();
-				oDiz.mNovaFrase("# Energia 16");
+				oDiz.mNovaFrase("# Especialização em Armas e Armaduras.");
 				oDiz.mFala();
 				oDiz.mNovaFrase("");
 				oDiz.mFala();
-				oDiz.mNovaFrase("# [2] Mago");
+				oDiz.mNovaFrase("# [2] Escola de Magia");
 				oDiz.mFala();
-				oDiz.mNovaFrase("# Habilidade 12");
-				oDiz.mFala();
-				oDiz.mNovaFrase("# Energia 12");
-				oDiz.mFala();
-				oDiz.mNovaFrase("# Mana 10");
+				oDiz.mNovaFrase("# Especialização em Magias e Encantamentos.");
 				oDiz.mFala();
 				vClasse = oDiz.mPergunta();
 				
@@ -794,11 +901,12 @@ import java.lang.*;
 					oDiz.mLimpa();
 					vpch=12;
 					vpce=16;
+					vMana=0;
 					vpcpot=5;
 					vpcxp=0;
 					vpclvl=1;
 					vpcgold=1000;
-					oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse);
+					oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse, vMana);
 					oGrava.mSalvar();
 					oDiz.mNovaFrase("# Personagem Gerado e Gravado.");
 					oDiz.mFala();
@@ -813,11 +921,12 @@ import java.lang.*;
 					oDiz.mLimpa();
 					vpch=12;
 					vpce=12;
+					vMana=20;
 					vpcpot=3;
 					vpcxp=0;
 					vpclvl=1;
 					vpcgold=1000;
-					oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse);
+					oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse, vMana);
 					oGrava.mSalvar();
 					oDiz.mNovaFrase("# Personagem Gerado e Gravado.");
 					oDiz.mFala();
@@ -844,6 +953,8 @@ import java.lang.*;
 					vpclvl=Integer.parseInt(oGrava.mCarregar(vNome,4));
 					vpcgold=Integer.parseInt(oGrava.mCarregar(vNome,5));
 					vpcpot=Integer.parseInt(oGrava.mCarregar(vNome,6));
+					vClasse=oGrava.mCarregar(vNome,7);
+					vMana=Integer.parseInt(oGrava.mCarregar(vNome,8));
 					vInicioOk=0;
 				}
 				oDiz.mPausa();
@@ -941,9 +1052,18 @@ import java.lang.*;
 					vpclvl=Integer.parseInt(oGrava.mCarregar(vNome,4));
 					vpcgold=Integer.parseInt(oGrava.mCarregar(vNome,5));
 					vpcpot=Integer.parseInt(oGrava.mCarregar(vNome,6));
+					vClasse=oGrava.mCarregar(vNome,7);
+					vMana=Integer.parseInt(oGrava.mCarregar(vNome,8));
 					/*
 						Desenha Ficha
 					*/
+						if (vClasse.equals("1")) {
+							oDiz.mNovaFrase("# Classe: Escola de Armas");
+							oDiz.mFala();
+						} else {
+							oDiz.mNovaFrase("# Classe: Escola de Magia");
+							oDiz.mFala();
+						}
 					oDiz.mNovaFrase("# Nome: "+vNome);
 					oDiz.mFala();
 					oDiz.mNovaFrase("# XP: "+vpcxp+" - Nível: "+vpclvl);
@@ -954,6 +1074,10 @@ import java.lang.*;
 					oDiz.mFala();
 					oDiz.mNovaFrase("# Pontos de Vida: "+vpce);
 					oDiz.mFala();
+						if (vClasse.equals("2")) {
+							oDiz.mNovaFrase("# Pontos de Mana: " + vMana);
+							oDiz.mFala();
+						}
 					oDiz.mNovaFrase("#");
 					oDiz.mFala();
 					oDiz.mNovaFrase("# Poções: "+vpcpot);
@@ -962,12 +1086,23 @@ import java.lang.*;
 					oDiz.mFala();
 					oDiz.mNovaFrase("#");
 					oDiz.mFala();
-					oDiz.mNovaFrase("# Arma/Magia:");
-					oDiz.mFala();
-					oGrava.mCarregaItemEquipado(vNome, "Arma", "1");
-					oDiz.mNovaFrase("# Set/Manto: ");
-					oDiz.mFala();
-					oGrava.mCarregaItemEquipado(vNome, "Set", "1");
+					
+						if (vClasse.equals("1")) {
+							oDiz.mNovaFrase("# Arma:");
+							oDiz.mFala();
+							oGrava.mCarregaItemEquipado(vNome, "Arma", "1");
+							oDiz.mNovaFrase("# Set: ");
+							oDiz.mFala();
+							oGrava.mCarregaItemEquipado(vNome, "Set", "1");
+						} else {
+							oDiz.mNovaFrase("# Magia:");
+							oDiz.mFala();
+							oGrava.mCarregaItemEquipado(vNome, "Magia", "1");
+							oDiz.mNovaFrase("# Manto: ");
+							oDiz.mFala();
+							oGrava.mCarregaItemEquipado(vNome, "Manto", "1");
+						}
+					
 					oDiz.mNovaFrase("#");
 					oDiz.mFala();					
 					oDiz.mPausa();
@@ -1021,7 +1156,7 @@ import java.lang.*;
 									vExitLojaItens=0;
 								} else {
 									vpcgold = oGrava.mVenderItem(vNome, vOptLojaItens, vpcgold);
-									oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse);
+									oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse, vMana);
 								    oGrava.mSalvar();
 									oDiz.mNovaFrase("# Item ["+ vOptLojaItens +"] Vendido.");
 									oDiz.mFala();
@@ -1092,7 +1227,7 @@ import java.lang.*;
 							} else {
 								vpcgold = vpcgold - 50;
 								vpcpot++;
-								oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse);
+								oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse, vMana);
 								oGrava.mSalvar();
 							}
 						}
@@ -1132,15 +1267,15 @@ import java.lang.*;
 						oDiz.mFala();
 						oDiz.mNovaFrase("#");						
 						oDiz.mFala();
-						oDiz.mNovaFrase("# [1] [10] Cerveja - Recupera 2 Pontos de HP");
+						oDiz.mNovaFrase("# [1] [10] Cerveja - Recupera 2 Pontos de HP/MP");
 						oDiz.mFala();
 						oDiz.mNovaFrase("#");
 						oDiz.mFala();
-						oDiz.mNovaFrase("# [2] [50] Vinho - Recupera 5 Pontos de HP");
+						oDiz.mNovaFrase("# [2] [50] Vinho - Recupera 5 Pontos de HP/MP");
 						oDiz.mFala();
 						oDiz.mNovaFrase("#");
 						oDiz.mFala();
-						oDiz.mNovaFrase("# [3] [150] Chá de Cogumelo - Recupera 10 Pontos de HP");
+						oDiz.mNovaFrase("# [3] [150] Chá de Cogumelo - Recupera 10 Pontos de HP/MP");
 						oDiz.mFala();						
 						oDiz.mNovaFrase("#");
 						oDiz.mFala();						
@@ -1160,7 +1295,10 @@ import java.lang.*;
 								vpcgold = vpcgold - 10;
 								vpcpot++;
 								vpce = vpce + 2;
-								oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse);
+								vMana = vMana + 2;
+								vpce = oGrava.mCalculaLimiteHP(vpclvl, vpce);
+								vMana = oGrava.mCalculaLimiteMP(vpclvl, vMana);
+								oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse, vMana);
 								oGrava.mSalvar();
 							}
 						}
@@ -1174,7 +1312,10 @@ import java.lang.*;
 								vpcgold = vpcgold - 50;
 								vpcpot++;
 								vpce = vpce + 5;
-								oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse);
+								vMana = vMana + 5;
+								vpce = oGrava.mCalculaLimiteHP(vpclvl, vpce);
+								vMana = oGrava.mCalculaLimiteMP(vpclvl, vMana);
+								oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse, vMana);
 								oGrava.mSalvar();
 							}
 						}
@@ -1188,7 +1329,10 @@ import java.lang.*;
 								vpcgold = vpcgold - 150;
 								vpcpot++;
 								vpce = vpce + 10;
-								oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse);
+								vMana = vMana + 10;
+								vpce = oGrava.mCalculaLimiteHP(vpclvl, vpce);
+								vMana = oGrava.mCalculaLimiteMP(vpclvl, vMana);
+								oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse, vMana);
 								oGrava.mSalvar();
 							}
 						}
@@ -1256,7 +1400,7 @@ import java.lang.*;
 								// Subtrai Ouro e Adiciona Item.
 								vpcgold = vpcgold - vPrecoItem1;
 								oGrava.mInsereItemBau(vNome, vItem1 + "\n");
-								oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse);
+								oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse, vMana);
 								oGrava.mSalvar();	
 								oDiz.mNovaFrase("# Item comprado com sucesso.");
 								oDiz.mFala();
@@ -1273,7 +1417,7 @@ import java.lang.*;
 								// Subtrai Ouro e Adiciona Item.
 								vpcgold = vpcgold - vPrecoItem2;
 								oGrava.mInsereItemBau(vNome, vItem2 + "\n");
-								oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse);
+								oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse, vMana);
 								oGrava.mSalvar();	
 								oDiz.mNovaFrase("# Item comprado com sucesso.");
 								oDiz.mFala();
@@ -1290,7 +1434,7 @@ import java.lang.*;
 								// Subtrai Ouro e Adiciona Item.
 								vpcgold = vpcgold - vPrecoItem3;
 								oGrava.mInsereItemBau(vNome, vItem3 + "\n");
-								oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse);
+								oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse, vMana);
 								oGrava.mSalvar();	
 								oDiz.mNovaFrase("# Item comprado com sucesso.");
 								oDiz.mFala();
@@ -1307,7 +1451,7 @@ import java.lang.*;
 								// Subtrai Ouro e Adiciona Item.
 								vpcgold = vpcgold - vPrecoItem4;
 								oGrava.mInsereItemBau(vNome, vItem4 + "\n");
-								oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse);
+								oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse, vMana);
 								oGrava.mSalvar();	
 								oDiz.mNovaFrase("# Item comprado com sucesso.");
 								oDiz.mFala();
@@ -1378,7 +1522,7 @@ import java.lang.*;
 								// Subtrai Ouro e Adiciona Item.
 								vpcgold = vpcgold - vPrecoItem1;
 								oGrava.mInsereItemBau(vNome, vItem1 + "\n");
-								oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse);
+								oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse, vMana);
 								oGrava.mSalvar();	
 								oDiz.mNovaFrase("# Item comprado com sucesso.");
 								oDiz.mFala();
@@ -1395,7 +1539,7 @@ import java.lang.*;
 								// Subtrai Ouro e Adiciona Item.
 								vpcgold = vpcgold - vPrecoItem2;
 								oGrava.mInsereItemBau(vNome, vItem2 + "\n");
-								oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse);
+								oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse, vMana);
 								oGrava.mSalvar();	
 								oDiz.mNovaFrase("# Item comprado com sucesso.");
 								oDiz.mFala();
@@ -1412,7 +1556,7 @@ import java.lang.*;
 								// Subtrai Ouro e Adiciona Item.
 								vpcgold = vpcgold - vPrecoItem3;
 								oGrava.mInsereItemBau(vNome, vItem3 + "\n");
-								oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse);
+								oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse, vMana);
 								oGrava.mSalvar();	
 								oDiz.mNovaFrase("# Item comprado com sucesso.");
 								oDiz.mFala();
@@ -1429,7 +1573,7 @@ import java.lang.*;
 								// Subtrai Ouro e Adiciona Item.
 								vpcgold = vpcgold - vPrecoItem4;
 								oGrava.mInsereItemBau(vNome, vItem4 + "\n");
-								oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse);
+								oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse, vMana);
 								oGrava.mSalvar();	
 								oDiz.mNovaFrase("# Item comprado com sucesso.");
 								oDiz.mFala();
@@ -1458,6 +1602,11 @@ import java.lang.*;
 					Integer vNPCDef = 0;
 					Integer vPCDano = 0;
 					Integer vNPCDano= 0;
+					Integer vBonusAtk=Integer.valueOf(oGrava.mCarregaItemEquipado(vNome, "Arma", "2"));
+					Integer vBonusDef=Integer.valueOf(oGrava.mCarregaItemEquipado(vNome, "Set", "2"));
+					Integer vBonusDano=Integer.valueOf(oGrava.mCarregaItemEquipado(vNome, "Arma", "3"));
+					Integer vBonusAbs=Integer.valueOf(oGrava.mCarregaItemEquipado(vNome, "Set", "3"));
+					
 					Object Arena = new Object();
 					
 					// Verifica Level PC
@@ -1465,10 +1614,10 @@ import java.lang.*;
 										
 					// Gera Valores NPC
 					vNomeNPC=oGrava.mGeraNomeOrc(oArena.mDados(1,20));
-					vnpch = oArena.mDados(6,10) + vpclvl;
-					vnpce = oArena.mDados(6,14) + vpclvl;
-					vnpcgold = oArena.mDados(500,999) * vpclvl;
-					vnpcxp = oArena.mDados(100,500) * vpclvl;
+					vnpch = oArena.mNpcH(vpclvl);
+					vnpce = oArena.mNpcE(vpclvl);
+					vnpcgold = oArena.mNpcXP(vpclvl);
+					vnpcxp = oArena.mNpcGold(vpclvl);
 				
 					synchronized(Arena) {
 						while (vExitArena==0) 
@@ -1481,6 +1630,8 @@ import java.lang.*;
 							vpclvl=Integer.parseInt(oGrava.mCarregar(vNome,4));
 							vpcgold=Integer.parseInt(oGrava.mCarregar(vNome,5));
 							vpcpot=Integer.parseInt(oGrava.mCarregar(vNome,6));
+							vClasse=oGrava.mCarregar(vNome,7);
+							vMana=Integer.parseInt(oGrava.mCarregar(vNome,8));
 							
 							
 							oDiz.mLimpa();
@@ -1521,10 +1672,10 @@ import java.lang.*;
 									oDiz.mFala();
 									oDiz.mWait();
 									vNomeNPC=oGrava.mGeraNomeOrc(oArena.mDados(1,20));
-									vnpch = oArena.mDados(6,10) + vpclvl;
-									vnpce = oArena.mDados(6,14) + vpclvl;
-									vnpcgold = oArena.mDados(500,999) * vpclvl;
-									vnpcxp = oArena.mDados(100,500) * vpclvl;
+									vnpch = oArena.mNpcH(vpclvl);
+									vnpce = oArena.mNpcE(vpclvl);
+									vnpcgold = oArena.mNpcXP(vpclvl);
+									vnpcxp = oArena.mNpcGold(vpclvl);
 									}
 									
 								if (vpce < 1) {
@@ -1539,7 +1690,7 @@ import java.lang.*;
 									oDiz.mWait();
 									
 									// Round PC
-									vPCAtk = vpch + oArena.mDados(2,12);
+									vPCAtk = vpch + oArena.mDados(2,12) + vBonusAtk;
 									vNPCDef = vnpch + oArena.mDados(2,12);
 									oDiz.mNovaFrase("# Força de Ataque: " + vPCAtk);
 									oDiz.mFala();
@@ -1555,7 +1706,7 @@ import java.lang.*;
 										oDiz.mWait();
 										
 										// Calcula Dano
-										vPCDano = oArena.mDados(1,6);
+										vPCDano = oArena.mDados(1,6) + vBonusDano;
 										oDiz.mNovaFrase("# " + vNomeNPC + " sofre " + vPCDano + " pontos de dano.");
 										oDiz.mFala();
 										oDiz.mWait();
@@ -1571,7 +1722,7 @@ import java.lang.*;
 											// Calcula Level
 											vpclvl=oGrava.mConfiguraLevel(vpcxp);
 											vpch=oGrava.mCalculaHabilidade(vpclvl);
-											oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse);
+											oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse, vMana);
 											oGrava.mSalvar();	
 											oDiz.mPausa();
 										} 
@@ -1588,7 +1739,7 @@ import java.lang.*;
 										oDiz.mFala();
 										oDiz.mWait();
 										vNPCAtk = vnpch + oArena.mDados(2,12);
-										vPCDef = vpch + oArena.mDados(2,12);
+										vPCDef = vpch + oArena.mDados(2,12) + vBonusDef;
 										oDiz.mNovaFrase("# Força de Ataque: " + vNPCAtk);
 										oDiz.mFala();
 										oDiz.mWait();
@@ -1603,12 +1754,14 @@ import java.lang.*;
 											oDiz.mWait();
 											
 											// Calcula Dano
-											vNPCDano = oArena.mDados(1,6);
+											vNPCDano = oArena.mDados(1,6) - vBonusAbs;
 											oDiz.mNovaFrase("# " + vNome + " sofre " + vNPCDano + " pontos de dano.");
 											oDiz.mFala();
 											oDiz.mWait();
 											
 											vpce = vpce - vNPCDano;
+											oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse, vMana);
+											oGrava.mSalvar();	
 											
 											// Processa Poções
 											while (vpce < 1 && vpcpot > 0)
@@ -1616,14 +1769,14 @@ import java.lang.*;
 												
 												vpce = vpce + oArena.mDados(2,12);
 												vpcpot = vpcpot - 1;
-												oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse);
+												oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse, vMana);
 												oGrava.mSalvar();	
 												oDiz.mNovaFrase("# Recuperando Energia");
 												oDiz.mFala();
 												oDiz.mWait();
 											}
 											
-											if (vpce < 1) {
+											if (vpce < 1 && vpcpot < 1) {
 												oDiz.mNovaFrase("# " + vNome + "foi humilhado.");
 												oDiz.mFala();
 												oDiz.mPausa();
@@ -1654,10 +1807,10 @@ import java.lang.*;
 									oDiz.mFala();
 									oDiz.mWait();
 									vNomeNPC=oGrava.mGeraNomeOrc(oArena.mDados(1,20));
-									vnpch = oArena.mDados(10,18) + vpclvl;
-									vnpce = oArena.mDados(12,18) + vpclvl;
-									vnpcgold = oArena.mDados(500,999) * vpclvl;
-									vnpcxp = oArena.mDados(100,500) * vpclvl;
+									vnpch = oArena.mNpcH(vpclvl);
+									vnpce = oArena.mNpcE(vpclvl);
+									vnpcgold = oArena.mNpcXP(vpclvl);
+									vnpcxp = oArena.mNpcGold(vpclvl);
 									}
 									
 								if (vpce < 1) {
@@ -1682,9 +1835,10 @@ import java.lang.*;
 										oDiz.mFala();
 										oDiz.mWait();
 										vNomeNPC=oGrava.mGeraNomeOrc(oArena.mDados(1,20));
-										vnpch = oArena.mDados(6,10);
-										vnpce = oArena.mDados(6,14);
-										vnpcgold = oArena.mDados(500,999);
+										vnpch = oArena.mNpcH(vpclvl);
+										vnpce = oArena.mNpcE(vpclvl);
+										vnpcgold = oArena.mNpcXP(vpclvl);
+										vnpcxp = oArena.mNpcGold(vpclvl);
 										}
 										
 									if (vpce < 1) {
@@ -1699,7 +1853,7 @@ import java.lang.*;
 										//oDiz.mWait();
 										
 										// Round PC
-										vPCAtk = vpch + oArena.mDados(2,12);
+										vPCAtk = vpch + oArena.mDados(2,12) + vBonusAtk;
 										vNPCDef = vnpch + oArena.mDados(2,12);
 										//oDiz.mNovaFrase("# Força de Ataque: " + vPCAtk);
 										//oDiz.mFala();
@@ -1715,7 +1869,7 @@ import java.lang.*;
 											//oDiz.mWait();
 											
 											// Calcula Dano
-											vPCDano = oArena.mDados(1,6);
+											vPCDano = oArena.mDados(1,6) + vBonusDano;
 											oDiz.mNovaFrase("# " + vNomeNPC + " sofre " + vPCDano + " pontos de dano.");
 											oDiz.mFala();
 											oDiz.mWait();
@@ -1731,7 +1885,7 @@ import java.lang.*;
 												vpclvl=oGrava.mConfiguraLevel(vpcxp);
 												vpch=oGrava.mCalculaHabilidade(vpclvl);
 												oDiz.mFala();
-												oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse);
+												oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse, vMana);
 												oGrava.mSalvar();	
 												oDiz.mPausa();
 											} 
@@ -1748,7 +1902,7 @@ import java.lang.*;
 											//oDiz.mFala();
 											//oDiz.mWait();
 											vNPCAtk = vnpch + oArena.mDados(2,12);
-											vPCDef = vpch + oArena.mDados(2,12);
+											vPCDef = vpch + oArena.mDados(2,12) + vBonusDef;
 											//oDiz.mNovaFrase("# Força de Ataque: " + vNPCAtk);
 											//oDiz.mFala();
 											//oDiz.mWait();
@@ -1764,27 +1918,28 @@ import java.lang.*;
 												//oDiz.mWait();
 												
 												// Calcula Dano
-												vNPCDano = oArena.mDados(1,6);
+												vNPCDano = oArena.mDados(1,6) - vBonusAbs;
 												oDiz.mNovaFrase("# " + vNome + " sofre " + vNPCDano + " pontos de dano.");
 												oDiz.mFala();
 												oDiz.mWait();
 												
 												vpce = vpce - vNPCDano;
-												
+												oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse, vMana);
+												oGrava.mSalvar();	
 												// Processa Poções
 												while (vpce < 1 && vpcpot > 0)
 												{
 													
 													vpce = vpce + oArena.mDados(2,12);
 													vpcpot = vpcpot - 1;
-													oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse);
+													oGrava.mConfiguraAtributos(vNome, vpch, vpce, vpcxp, vpclvl, vpcgold, vpcpot, vClasse, vMana);
 													oGrava.mSalvar();	
 													//oDiz.mNovaFrase("# Recuperando Energia");
 													//oDiz.mFala();
 													//oDiz.mWait();
 												}
 												
-												if (vpce < 1) {
+												if (vpce < 1 && vpcpot < 1) {
 													oDiz.mNovaFrase("# " + vNome + "foi humilhado. tsc tsc ¬¬");
 													oDiz.mFala();
 													oDiz.mPausa();
