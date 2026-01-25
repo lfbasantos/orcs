@@ -1,0 +1,71 @@
+╔══════════════════════════════════════════════════════════════╗
+║                                                              ║
+║         🗡️  BEM-VINDO AO JOGO ORCS - TEXT-BASED RPG 🗡️       ║
+║                                                              ║
+║              Seu projeto está 100% pronto!                  ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
+
+
+🚀 PARA JOGAR AGORA:
+
+   ./run.sh
+
+   ou
+
+   java -jar Orcs.jar
+
+
+📚 DOCUMENTAÇÃO DISPONÍVEL:
+
+   • QUICKSTART.txt       ← Comece aqui para instruções rápidas!
+   • README.md            ← Guia geral do jogo
+   • INDEX.md             ← Índice completo de todos os arquivos
+   • DESENVOLVIMENTO.md   ← Guia técnico (para devs)
+   • ROADMAP.md           ← Ideias de melhorias futuras
+   • TROUBLESHOOTING.md   ← Solução de problemas
+
+
+✅ O QUE JÁ FOI FEITO:
+
+   ✓ Código compilado com sucesso
+   ✓ JAR executável criado (Orcs.jar)
+   ✓ Scripts de build e run criados
+   ✓ Documentação completa
+   ✓ Sistema de saves funcional
+   ✓ Sistema de combate implementado
+   ✓ Loja e economia funcionais
+   ✓ Sistema de níveis e XP
+
+
+🎮 COMO JOGAR:
+
+   1. Execute: ./run.sh
+   2. Crie um novo personagem
+   3. Escolha sua classe
+   4. Comece a lutar na Arena
+   5. Ganhe Gold e XP
+   6. Compre melhores equipamentos
+   7. Salve seu progresso
+
+
+⚙️ REQUISITOS:
+
+   • Java 8 ou superior
+   • Terminal/Console
+   • ~10MB de espaço livre
+
+
+💡 DICAS:
+
+   • Se quiser recompilar: ./build.sh
+   • Se tiver problemas: Leia TROUBLESHOOTING.md
+   • Para desenvolvedores: Leia DESENVOLVIMENTO.md
+   • Ver todas as opções: Consulte INDEX.md
+
+
+═══════════════════════════════════════════════════════════════
+
+           Bom jogo! Divirta-se no mundo dos Orcs! 🎉
+
+═══════════════════════════════════════════════════════════════

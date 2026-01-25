@@ -1,0 +1,54 @@
+🗡️ QUICK START - ORCS GAME
+================================
+
+✅ PROJETO JÁ ESTÁ COMPILADO E PRONTO!
+
+📌 PARA JOGAR AGORA:
+   Opção 1 (Recomendado):
+   $ ./run.sh
+
+   Opção 2:
+   $ java -jar Orcs.jar
+
+   Opção 3 (com Make):
+   $ make run
+
+================================
+
+🔧 SE PRECISAR RECOMPILAR:
+
+   Opção 1: Script automático
+   $ ./build.sh
+
+   Opção 2: Com Make
+   $ make build
+
+   Opção 3: Manual
+   $ javac Orcs.java
+   $ jar cfm Orcs.jar MANIFEST.MF *.class
+
+================================
+
+📚 DOCUMENTAÇÃO:
+   • README.md - Visão geral do jogo
+   • DESENVOLVIMENTO.md - Guia técnico detalhado
+
+================================
+
+🎮 COMO JOGAR:
+   1. Crie um novo personagem
+   2. Escolha uma classe (Warrior, Mage, Rogue, etc)
+   3. Aceite os itens iniciais
+   4. Entre na Arena para combater
+   5. Ganhe Gold e XP
+   6. Compre melhores equipamentos na Loja
+   7. Salve seu progresso
+
+================================
+
+⚙️ REQUISITOS:
+   • Java 8 ou superior
+   • Terminal/Console
+   • ~10MB de espaço em disco
+
+Divirta-se! 🎉
