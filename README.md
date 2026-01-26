@@ -26,13 +26,19 @@
 ./build.sh
 ```
 
-### Opção 2: Manual
+### Opção 2: Make
+```bash
+make build
+```
+
+### Opção 3: Manual
 ```bash
 # Compilar
-javac Orcs.java
+mkdir -p build/classes dist
+javac -d build/classes -sourcepath src/main/java $(find src/main/java -name '*.java')
 
 # Criar o JAR
-jar cfm Orcs.jar MANIFEST.MF *.class
+jar cfm dist/Orcs.jar MANIFEST.MF -C build/classes .
 ```
 
 ---
@@ -41,14 +47,44 @@ jar cfm Orcs.jar MANIFEST.MF *.class
 
 Após compilar, execute:
 ```bash
-java -jar Orcs.jar
+./run.sh
+# ou
+java -jar dist/Orcs.jar
 ```
 
 **Requisitos:** Java 8 ou superior
 
 ---
 
-## 📁 Estrutura de Dados
+## 📁 Estrutura do Projeto
+
+```
+orcs/
+├── src/main/java/           # Código-fonte
+│   └── com/orcs/
+│       ├── game/            # Classe principal (Orcs.java)
+│       ├── ui/              # Interface do usuário (Console.java)
+│       ├── save/            # Sistema de salvamento (SaveManager.java)
+│       └── combat/          # Sistema de combate (Arena.java)
+├── build/                   # Arquivos compilados (temporário)
+├── dist/                    # JAR executável final
+│   └── Orcs.jar            # ⭐ Jogo pronto para distribuir
+├── docs/                    # Documentação completa
+│   ├── DESENVOLVIMENTO.md  # Guia técnico
+│   ├── ROADMAP.md          # Plano de melhorias
+│   ├── TROUBLESHOOTING.md  # Resolução de problemas
+│   └── ...
+├── legacy/                  # Código original (backup)
+├── orcdata/                 # Saves dos personagens
+│   ├── *.gamesave          # Atributos
+│   └── *.items             # Inventário
+├── build.sh                 # Script de compilação
+├── run.sh                   # Script de execução
+├── Makefile                 # Build alternativo
+└── README.md               # Este arquivo
+```
+
+### Estrutura de Dados
 
 O jogo salva os dados dos personagens em `orcdata/`:
 - `personagem.gamesave` - Atributos do personagem
@@ -74,8 +110,50 @@ O jogo salva os dados dos personagens em `orcdata/`:
 
 ---
 
+## �️ Roadmap
+
+### ✅ Concluído (v0.1.6)
+- ✓ Refatoração completa do código
+- ✓ Separação em múltiplos arquivos e pacotes
+- ✓ Estrutura modular profissional
+- ✓ Sistema de build automatizado
+- ✓ Documentação completa
+
+### 🔥 Próximas Implementações (Alta Prioridade)
+
+#### v0.2.0 - Melhorias de Código
+- [ ] Completar implementação da classe `Orcs.java` (lojas, taverna, arena)
+- [ ] Adicionar validação de entrada do usuário
+- [ ] Implementar tratamento de exceções robusto
+- [ ] Melhorar sistema de cores ANSI no console
+- [ ] Testes unitários básicos
+
+#### v0.3.0 - Sistema de Magia
+- [ ] Implementar feitiços para magos (Fire Bolt, Ice Bolt, Heal)
+- [ ] Sistema de consumo de Mana
+- [ ] Balanceamento de classes (Warrior vs Mage)
+- [ ] Novas magias na loja de cajados
+
+#### v0.4.0 - Novos Inimigos
+- [ ] Tipos variados de NPCs (Goblin, Orc, Troll, Dragão)
+- [ ] Dificuldade escalonada por tipo
+- [ ] Boss fights com recompensas especiais
+- [ ] Sistema de spawning inteligente
+
+### 🎯 Futuro (Médio/Longo Prazo)
+- Sistema de Quests e Missões
+- Mapa de exploração com múltiplos locais
+- Sistema de Companheiros
+- Crafting e Receitas
+- Achievements e conquistas
+- Multiplayer local (batalhas PvP)
+
+> 📖 Veja [docs/ROADMAP.md](docs/ROADMAP.md) para detalhes completos
+
+---
+
 ## 📝 Notas
 
-Este é um projeto em desenvolvimento. Algumas funcionalidades podem estar em fase de testes.
+Este é um projeto em desenvolvimento ativo. Contribuições são bem-vindas!
 
 Para mais informações ou reportar bugs, entre em contato com o autor.
