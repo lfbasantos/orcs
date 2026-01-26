@@ -4,7 +4,7 @@ help:
 	@echo "🗡️  Orcs - Text-Based RPG Game"
 	@echo ""
 	@echo "Comandos disponíveis:"
-	@echo "  make build    - Compila o jogo e cria Orcs.jar"
+	@echo "  make build    - Compila o jogo e cria dist/Orcs.jar"
 	@echo "  make run      - Executa o jogo"
 	@echo "  make clean    - Remove arquivos compilados"
 	@echo "  make help     - Mostra esta mensagem"
@@ -12,18 +12,19 @@ help:
 
 build:
 	@echo "Compilando..."
-	javac Orcs.java
-	jar cfm Orcs.jar MANIFEST.MF *.class
+	mkdir -p build/classes dist
+	javac -d build/classes -sourcepath src/main/java $$(find src/main/java -name '*.java')
+	jar cfm dist/Orcs.jar MANIFEST.MF -C build/classes .
 	@echo "✓ Build completo! Execute: make run"
 
 run:
 	@if [ -f "Orcs.jar" ]; then \
-		java -jar Orcs.jar; \
+		java -jar dist/Orcs.jar; \
 	else \
-		echo "Erro: Orcs.jar não encontrado. Execute: make build"; \
+		echo "Erro: dist/Orcs.jar não encontrado. Execute: make build"; \
 		exit 1; \
 	fi
 
 clean:
-	rm -f *.class Orcs.jar
+	rm -rf build dist *.class Orcs.jar
 	@echo "✓ Arquivos compilados removidos"

@@ -16,13 +16,14 @@ NC='\033[0m' # No Color
 
 # Limpar arquivos antigos
 echo -e "${YELLOW}[1/3]${NC} Limpando arquivos compilados antigos..."
-rm -f *.class Orcs.jar
+rm -rf build dist *.class Orcs.jar
+mkdir -p build/classes dist
 echo -e "${GREEN}✓${NC} Arquivos antigos removidos"
 echo ""
 
 # Compilar
 echo -e "${YELLOW}[2/3]${NC} Compilando código Java..."
-javac Orcs.java
+javac -d build/classes -sourcepath src/main/java $(find src/main/java -name '*.java')
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓${NC} Compilação bem-sucedida"
 else
@@ -33,7 +34,7 @@ echo ""
 
 # Criar JAR
 echo -e "${YELLOW}[3/3]${NC} Empacotando em JAR executável..."
-jar cfm Orcs.jar MANIFEST.MF *.class
+jar cfm dist/Orcs.jar MANIFEST.MF -C build/classes .
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓${NC} JAR criado com sucesso"
 else
@@ -48,5 +49,5 @@ echo -e "${GREEN}Build concluído com sucesso!${NC}"
 echo "========================================="
 echo ""
 echo "Para rodar o jogo, execute:"
-echo -e "${YELLOW}  java -jar Orcs.jar${NC}"
+echo -e "${YELLOW}  java -jar dist/Orcs.jar${NC}"
 echo ""
