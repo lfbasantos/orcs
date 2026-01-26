@@ -2,7 +2,7 @@
 
 > Um jogo de RPG textual puro em Java, sem dependências complexas!
 
-**Versão:** 0.1.6 - Alpha  
+**Versão:** 0.2.0 - Alpha  
 **Autor:** Luiz Filipe - lfbasantos@gmail.com
 
 ---
@@ -12,10 +12,13 @@
 - 🎮 **100% Textual** - Interface puramente baseada em texto
 - ⚡ **Sem Dependências** - Usa apenas Java padrão
 - 🏃 **Pronto para Jogar** - Executável como JAR standalone
-- ⚔️ **Sistema de Combate** - Batalhas por turnos com cálculo de dano
-- 💰 **Sistema de Economia** - Ouro, itens e loja
-- 📊 **Progressão** - Sistema de níveis e experiência
-- 💾 **Salvamento** - Persistência de personagens
+- ⚔️ **Sistema de Combate** - Batalhas por turnos e modo rampage
+- 🏪 **Sistema de Lojas** - 3 lojas diferentes (Itens, Armas, Magias)
+- 🍺 **Taverna** - Recupere HP/MP com bebidas
+- 💰 **Sistema de Economia** - Ouro, compra/venda de itens
+- 📊 **Progressão** - Sistema de níveis e experiência com XP automático
+- 🎒 **Baú Completo** - Visualize, equipe e venda itens
+- 💾 **Salvamento** - Persistência automática de personagens
 
 ---
 
@@ -94,11 +97,18 @@ O jogo salva os dados dos personagens em `orcdata/`:
 
 ## 🎯 Gameplay
 
-1. **Novo Personagem** - Crie seu Orc com classe específica
-2. **Progresso** - Ganhe experiência em combate
-3. **Equipamento** - Compre armas e armaduras na loja
-4. **Arena** - Enfrente outros Orcs em combate
-5. **Salve o Jogo** - Seu progresso é persistente
+### Funcionalidades Completas
+1. **Criar Personagem** - Escolha entre Guerreiro ou Mago
+2. **Loja de Itens** - Compre poções de HP (50 gold)
+3. **Loja de Armas & Armaduras** - Equipamentos para guerreiros
+4. **Loja de Mantos & Magias** - Equipamentos para magos
+5. **Taverna** - Recupere HP/MP com Cerveja, Vinho ou Chá de Cogumelo
+6. **Ver Baú** - Visualize, equipe ou venda seus itens
+7. **Arena** - Dois modos de combate:
+   - **Ataque Normal**: Combate turno a turno detalhado
+   - **Rampage**: Combate contínuo até derrota
+8. **Sistema de Níveis** - Ganhe XP, suba de nível automaticamente
+9. **Auto-Save** - Progresso salvo após cada ação importante
 
 ---
 
@@ -110,43 +120,41 @@ O jogo salva os dados dos personagens em `orcdata/`:
 
 ---
 
-## �️ Roadmap
+## 🛠️ Roadmap
 
-### ✅ Concluído (v0.1.6)
-- ✓ Refatoração completa do código
-- ✓ Separação em múltiplos arquivos e pacotes
-- ✓ Estrutura modular profissional
-- ✓ Sistema de build automatizado
-- ✓ Documentação completa
+### ✅ v0.2.0 - CONCLUÍDO (Janeiro 2026)
+- ✓ Sistema completo de Loja de Itens (poções)
+- ✓ Taverna com recuperação de HP/MP (3 bebidas)
+- ✓ Loja de Armas & Armaduras (4 itens)
+- ✓ Loja de Mantos & Magias (4 itens)
+- ✓ Arena com Modo Normal e Rampage
+- ✓ Sistema de combate com bônus de equipamento
+- ✓ Auto-consumo de poções em emergência
+- ✓ Geração dinâmica de NPCs por nível
+- ✓ Sistema de baú completo (ver, equipar, vender)
 
-### 🔥 Próximas Implementações (Alta Prioridade)
-
-#### v0.2.0 - Melhorias de Código
-- [ ] Completar implementação da classe `Orcs.java` (lojas, taverna, arena)
-- [ ] Adicionar validação de entrada do usuário
-- [ ] Implementar tratamento de exceções robusto
-- [ ] Melhorar sistema de cores ANSI no console
+### 🚧 v0.3.0 - Melhorias de Qualidade (Próximo)
+- [ ] Validação de entrada em todos os menus
+- [ ] Tratamento robusto de erros de arquivo
+- [ ] Sistema de cores ANSI no console
+- [ ] Confirmações para ações irreversíveis
+- [ ] Sistema de ajuda contextual
+- [ ] Feedback visual de progresso
 - [ ] Testes unitários básicos
 
-#### v0.3.0 - Sistema de Magia
-- [ ] Implementar feitiços para magos (Fire Bolt, Ice Bolt, Heal)
-- [ ] Sistema de consumo de Mana
+### 🎯 v0.4.0 - Sistema de Magia Avançado
+- [ ] Feitiços para magos (Fire Bolt, Ice Bolt, Heal)
+- [ ] Sistema de consumo de Mana otimizado
 - [ ] Balanceamento de classes (Warrior vs Mage)
 - [ ] Novas magias na loja de cajados
 
-#### v0.4.0 - Novos Inimigos
-- [ ] Tipos variados de NPCs (Goblin, Orc, Troll, Dragão)
-- [ ] Dificuldade escalonada por tipo
-- [ ] Boss fights com recompensas especiais
-- [ ] Sistema de spawning inteligente
-
-### 🎯 Futuro (Médio/Longo Prazo)
+### 🔮 Futuro (Médio/Longo Prazo)
 - Sistema de Quests e Missões
+- Tipos variados de NPCs (Goblin, Troll, Dragão)
+- Boss fights com recompensas especiais
 - Mapa de exploração com múltiplos locais
-- Sistema de Companheiros
-- Crafting e Receitas
+- Sistema de Crafting e Receitas
 - Achievements e conquistas
-- Multiplayer local (batalhas PvP)
 
 > 📖 Veja [docs/ROADMAP.md](docs/ROADMAP.md) para detalhes completos
 
